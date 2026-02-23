@@ -1026,11 +1026,11 @@ button, input {
 /* --- Personal Touch --- */
 #personal .prose p { color: var(--text-secondary); }
 
-/* --- Aria Character + Waitlist CTA --- */
+/* --- Waitlist CTA --- */
 .section-cta {
   text-align: center;
   padding-top: var(--space-5xl);
-  padding-bottom: 0;
+  padding-bottom: var(--space-5xl);
   position: relative;
 }
 
@@ -1565,7 +1565,7 @@ button, input {
 /* --- Desktop: 960px+ --- */
 @media (min-width: 960px) {
   .section { padding: var(--space-6xl) 0; }
-  .section-cta { padding: var(--space-6xl) 0 0; }
+  .section-cta { padding: var(--space-6xl) 0; }
   .steps { grid-template-columns: repeat(3, 1fr); }
   .hero-icon img { width: 128px; height: 128px; }
 }
