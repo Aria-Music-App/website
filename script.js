@@ -1,26 +1,29 @@
 /* ============================================
    Aria Landing Page — script.js
-   Email form + smooth scroll
+   Dual email forms + smooth scroll + scroll reveals
    ============================================ */
 
 (function () {
   'use strict';
 
-  // --- Email Form ---
-  var form = document.getElementById('waitlist-form');
-  var errorEl = document.getElementById('form-error');
-  var successEl = document.getElementById('form-success');
+  // --- Email Forms (hero + bottom CTA) ---
+  function initForm(formId, errorId, successId) {
+    var form = document.getElementById(formId);
+    var errorEl = document.getElementById(errorId);
+    var successEl = document.getElementById(successId);
 
-  if (form) {
+    if (!form) return;
+
+    var emailInput = form.querySelector('input[type="email"]');
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      var emailInput = document.getElementById('email-input');
       var email = emailInput.value.trim();
 
-      // Client-side validation
       if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showError('please enter a valid email address.');
+        errorEl.textContent = 'Please enter a valid email address.';
+        errorEl.hidden = false;
         return;
       }
 
@@ -28,7 +31,6 @@
       submitBtn.disabled = true;
       submitBtn.textContent = '...';
 
-      // POST to Buttondown
       var formData = new FormData();
       formData.append('email', email);
 
@@ -41,31 +43,31 @@
             form.hidden = true;
             successEl.hidden = false;
           } else {
-            showError('something went wrong. please try again.');
+            errorEl.textContent = 'Something went wrong. Please try again.';
+            errorEl.hidden = false;
             submitBtn.disabled = false;
-            submitBtn.textContent = 'count me in';
+            submitBtn.textContent = 'Notify Me';
           }
         })
         .catch(function () {
-          showError('could not connect. please try again.');
+          errorEl.textContent = 'Could not connect. Please try again.';
+          errorEl.hidden = false;
           submitBtn.disabled = false;
-          submitBtn.textContent = 'let me know';
+          submitBtn.textContent = 'Notify Me';
         });
     });
+
+    // Clear error on input
+    if (emailInput) {
+      emailInput.addEventListener('input', function () {
+        errorEl.hidden = true;
+      });
+    }
   }
 
-  function showError(msg) {
-    errorEl.textContent = msg;
-    errorEl.hidden = false;
-  }
-
-  // Clear error when user starts typing again
-  var emailInput2 = document.getElementById('email-input');
-  if (emailInput2) {
-    emailInput2.addEventListener('input', function () {
-      errorEl.hidden = true;
-    });
-  }
+  // Initialize both forms
+  initForm('hero-form', 'hero-form-error', 'hero-form-success');
+  initForm('waitlist-form', 'form-error', 'form-success');
 
   // --- Smooth Scroll for anchor links ---
   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -78,4 +80,60 @@
       }
     });
   });
+
+  // --- Cursor-Reactive Specular for Glass Cards ---
+  if (!prefersReduced) {
+    document.querySelectorAll('.step-card, .proof-card').forEach(function (card) {
+      card.addEventListener('mousemove', function (e) {
+        var rect = card.getBoundingClientRect();
+        var x = ((e.clientX - rect.left) / rect.width) * 100;
+        var y = ((e.clientY - rect.top) / rect.height) * 100;
+        card.style.setProperty('--mouse-x', x + '%');
+        card.style.setProperty('--mouse-y', y + '%');
+        // Physical tilt — subtle perspective rotation
+        var rotateY = ((x - 50) / 50) * 2;
+        var rotateX = ((y - 50) / 50) * -2;
+        card.style.transform = 'perspective(800px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-2px) scale(1.015)';
+      });
+      card.addEventListener('mouseleave', function () {
+        card.style.setProperty('--mouse-x', '50%');
+        card.style.setProperty('--mouse-y', '30%');
+        card.style.transform = '';
+      });
+    });
+  }
+
+  // --- Scroll Reveal ---
+  if (!prefersReduced) {
+    var reveals = document.querySelectorAll('.reveal');
+    if (reveals.length > 0 && 'IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.15,
+        rootMargin: '0px 0px -60px 0px'
+      });
+
+      reveals.forEach(function (el) {
+        observer.observe(el);
+      });
+    }
+  }
+
+  // --- Button Jelly Re-trigger ---
+  if (!prefersReduced) {
+    document.querySelectorAll('.btn-primary').forEach(function (btn) {
+      btn.addEventListener('mouseenter', function () {
+        // Force animation restart by removing and re-adding
+        btn.style.animation = 'none';
+        btn.offsetHeight; // trigger reflow
+        btn.style.animation = '';
+      });
+    });
+  }
 })();
