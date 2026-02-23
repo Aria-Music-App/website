@@ -120,7 +120,6 @@
   --dur-float:      5s;
   --dur-halo:       3.5s;
   --dur-pedestal:   4s;
-  --dur-character:  6s;
 }
 
 /* --- Reset --- */
@@ -223,14 +222,6 @@ body::before {
   0%   { filter: drop-shadow(0 0 0px rgba(232, 132, 95, 0.4)); }
   70%  { filter: drop-shadow(0 0 10px rgba(232, 132, 95, 0)); }
   100% { filter: drop-shadow(0 0 0px rgba(232, 132, 95, 0)); }
-}
-
-@keyframes character-float {
-  0%   { transform: translateY(0) rotate(0deg); }
-  25%  { transform: translateY(-6px) rotate(-0.8deg); }
-  50%  { transform: translateY(-10px) rotate(0deg); }
-  75%  { transform: translateY(-6px) rotate(0.8deg); }
-  100% { transform: translateY(0) rotate(0deg); }
 }
 
 @keyframes glass-ring-pulse {
@@ -1075,47 +1066,6 @@ button, input {
   z-index: 0;
 }
 
-.aria-character {
-  position: relative;
-  z-index: 1;
-  margin-top: var(--space-xl);
-  display: flex;
-  justify-content: center;
-}
-
-.aria-character img {
-  width: 320px;
-  height: auto;
-  mask-image: radial-gradient(ellipse 70% 65% at 50% 45%, black 30%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 65% at 50% 45%, black 30%, transparent 80%);
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.25));
-}
-
-/* Warm ground glow beneath character */
-.aria-character::before {
-  content: "";
-  position: absolute;
-  bottom: 5%;
-  left: 50%;
-  width: 60%;
-  height: 30px;
-  transform: translateX(-50%);
-  background: radial-gradient(
-    ellipse 100% 100%,
-    rgba(232, 132, 95, 0.20) 0%,
-    rgba(232, 132, 95, 0.08) 40%,
-    transparent 70%
-  );
-  filter: blur(12px);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Happy floating Aria — she's dancing in her world */
-.aria-character.revealed img {
-  animation: character-float var(--dur-character) ease-in-out infinite;
-}
-
 .cta-sub {
   color: var(--text-secondary);
   max-width: 520px;
@@ -1543,19 +1493,6 @@ button, input {
     );
   }
 
-  /* === ARIA CHARACTER === */
-  .aria-character img {
-    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
-  }
-
-  .aria-character::before {
-    background: radial-gradient(
-      ellipse 100% 100%,
-      rgba(212, 118, 79, 0.12) 0%,
-      rgba(212, 118, 79, 0.05) 40%,
-      transparent 70%
-    );
-  }
 }
 
 /* --- Reduced Motion --- */
@@ -1595,7 +1532,6 @@ button, input {
   /* Disable all breathing/floating */
   .hero .hero-icon::before,
   .hero .hero-icon::after,
-  .aria-character.revealed img,
   .privacy-visual::after { animation: none; }
   /* Disable button jelly and coral pulse */
   .btn-primary { animation: none; }
@@ -1611,7 +1547,6 @@ button, input {
   .proof-grid { grid-template-columns: 1fr; }
   .form-row { flex-direction: column; }
   .btn-submit { width: 100%; text-align: center; }
-  .aria-character img { width: 260px; }
   .privacy-layout { flex-direction: column; text-align: center; }
   .header-links a:not(.header-cta) { display: none; }
 }
@@ -1619,7 +1554,6 @@ button, input {
 /* --- Tablet: 640px+ --- */
 @media (min-width: 640px) {
   .proof-grid { grid-template-columns: 1fr 1fr; }
-  .aria-character img { width: 360px; }
   .privacy-layout {
     flex-direction: row;
     align-items: center;
@@ -1634,7 +1568,6 @@ button, input {
   .section-cta { padding: var(--space-6xl) 0 0; }
   .steps { grid-template-columns: repeat(3, 1fr); }
   .hero-icon img { width: 128px; height: 128px; }
-  .aria-character img { width: 420px; }
 }
 
 /* --- Small screens: < 480px --- */
@@ -1643,5 +1576,4 @@ button, input {
   .btn-submit { width: 100%; text-align: center; }
   .hero-icon img { width: 88px; height: 88px; border-radius: 20px; }
   .hero-form { max-width: 100%; }
-  .aria-character img { width: 240px; }
 }
